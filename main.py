@@ -6,8 +6,13 @@ from dotenv import load_dotenv
 
 
 def get_my_account(headers):
-    url = 'https://clc.li/api/account'
-    response = requests.get(url, headers=headers)
+    # url = 'https://clc.li/api/account'
+    url = 'https://clc.li/api/url/add'
+    
+    body = {
+        "url": "https://google.com"
+    }
+    response = requests.post(url, headers=headers, json=body)
     response.raise_for_status()
     return response
 
@@ -24,9 +29,12 @@ def main():
         'Content-Type': 'application/json'
     }
     response = get_my_account(headers)
-    account_data = response.json()
-    print(json.dumps(account_data, indent=4, ensure_ascii=False))
-    print(response)
-    print(response.text)
+    short_url = response.json()
+    
+    print(short_url['shorturl'])
+    # print(json.dumps(short_url, indent=4, ensure_ascii=False))
+    # print(response)
+    # print(response.text)
+
 if __name__ == "__main__":
     main()
