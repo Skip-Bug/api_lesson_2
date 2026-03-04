@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 
 
 
-def get_my_account(headers):
-    # url = 'https://clc.li/api/account'
+def get_short_url(headers):
     url = 'https://clc.li/api/url/add'
     
     body = {
@@ -28,7 +27,7 @@ def main():
         'Authorization': f'Bearer {api_clc_li}',
         'Content-Type': 'application/json'
     }
-    response = get_my_account(headers)
+    response = get_short_url(headers)
     short_url = response.json()
     
     print(short_url['shorturl'])
