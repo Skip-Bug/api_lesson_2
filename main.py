@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 
 def get_short_url(headers):
     url = 'https://clc.li/api/url/add'
+    link_request = input("Введите ссылку для сокращения:")
     
     body = {
-        "url": "https://google.com"
+        "url": link_request
     }
     response = requests.post(url, headers=headers, json=body)
     response.raise_for_status()
@@ -30,7 +31,7 @@ def main():
     response = get_short_url(headers)
     short_url = response.json()
     
-    print(short_url['shorturl'])
+    print("\nВот ваша ссылка:", short_url['shorturl'])
     # print(json.dumps(short_url, indent=4, ensure_ascii=False))
     # print(response)
     # print(response.text)
