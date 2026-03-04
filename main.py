@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 
 def get_my_account(headers):
-    # url = 'https://clc.li/api/account'
     url = 'https://clc.li/api/account'
     response = requests.get(url, headers=headers)
     response.raise_for_status()
