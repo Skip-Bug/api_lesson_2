@@ -20,11 +20,8 @@ def shorten_link(token, link):
         )
     response.raise_for_status()
     short_url = response.json()
-    split_link = urlsplit(short_url['shorturl'])
-    short_link = split_link.netloc + split_link.path
     full_short_link = short_url['shorturl']
-
-    return short_link, full_short_link
+    return full_short_link
 
 
 def get_count_clicks(token, link):
@@ -39,41 +36,51 @@ def get_count_clicks(token, link):
         )
 
     response.raise_for_status()
-    links_data = response.json()
-        # Если ссылка есть в базе, но кликов 0
-    if 'data' in links_data:
-        return links_data['data'].get('clicks', 0)
-    
-    # Если ссылки нет в базе (никогда не использовалась)
-    if 'error' in links_data:
-        print(f"API вернул ошибку: {links_data.get('message', 'Неизвестная ошибка')}")
+    link_stats = response.json()
+    return link_stats
+    if 'data' in link_stats:
+        return link_stats['data'].get('clicks', 0)
+
+    if 'error' in link_stats:
+        error = link_stats.get('message', 'Неизвестная ошибка')
+        print(f"API вернул ошибку: {error}")
         return 0
-    
-    # Если какой-то другой формат ответа
+
     return 0
-    clicks_count = links_data['data']['clicks']
-    return clicks_count
+
+
+def is_shorten_link(link):
+    return 'clc.li' in link
 
 
 def main():
     load_dotenv()
-    token = os.getenv('API_CLC_LI')
+    token = os.getenv('CLC_LI_TOKEN_TO_API')
     user_input = input("Введите ссылку: ").strip()
 
     if not token:
         print("ОШИБКА: Не найден токен в переменных окружения!")
         return
 
-    if 'clc.li' in user_input:
-        try:
-            clicks_count = get_count_clicks(token, user_input)
-            print('Количество кликов ', clicks_count)
-        except requests.exceptions.HTTPError:
-            print("ОШИБКА: Проблема при подсчете!")
-        return
-
     if not user_input.startswith(('http://', 'https://')):
-        user_input = 'https://' + user_input
+        user_input = f'https://{user_input}'
+    
+    if is_shorten_link(user_input):
+        try:
+            link_stats = get_count_clicks(token, user_input)
+            
+            if 'data' in link_stats:
+                clicks_count = link_stats['data'].get('clicks', 0)
+                print('Количество кликов ', clicks_count)
+            elif 'error' in link_stats:
+                error = link_stats.get('message', 'Неизвестная ошибка')
+                print(f"API вернул ошибку: {error}")
+            else:
+                print("Не удалось получить статистику")
+                
+        except requests.exceptions.HTTPError:
+            print("Ошибка соединения с API!")
+        return
 
     try:
         response = requests.get(user_input, timeout=5)
@@ -83,8 +90,8 @@ def main():
         return
 
     try:
-        short_link, full_short_link = shorten_link(token, user_input)
-        print('Короткая ссылка ', short_link)
+        full_short_link = shorten_link(token, user_input)
+        print('Короткая ссылка ', full_short_link)
     except requests.exceptions.HTTPError:
         print("ОШИБКА: Проблема при обращении к API!")
         return
