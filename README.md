@@ -8,6 +8,16 @@
 ```bash
    cd укажите_путь_к_папке_api_lesson_2
 ```
+Проверьте версию Python:
+   ```bash
+python --version
+   ```
+- Должна быть версия 3.8 или выше
+
+Установите необходимые библиотеки:
+   ```bash
+pip install -r requirements.txt
+  ```
 **Запустите main.py**
 ```bash
 python main.py
