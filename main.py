@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import argparse
 import requests
 import os
 
@@ -18,10 +19,20 @@ def shorten_link(token, link):
         json=body
         )
     response.raise_for_status()
-    short_url = response.json()
-    full_short_link = short_url['shorturl']
-    return full_short_link
+    return response.json()['shorturl']
+    
+    
 
+def create_parser():
+    parser = argparse.ArgumentParser(
+        description='Делаем сокращение ссылок'
+    )
+    parser.add_argument(
+        'link',
+        nargs='?',
+        help='Ссылка для обработки'
+    )
+    return parser
 
 def get_count_clicks(token, link):
     headers = {
@@ -35,8 +46,7 @@ def get_count_clicks(token, link):
         )
 
     response.raise_for_status()
-    link_stats = response.json()
-    return link_stats
+    return response.json()
 
 
 def is_shorten_link(link):
@@ -45,16 +55,22 @@ def is_shorten_link(link):
 
 def main():
     load_dotenv()
+    parser = create_parser()
+    args = parser.parse_args()
     token = os.getenv('CLC_LI_TOKEN')
-    user_input = input("Введите ссылку: ").strip()
+    link = args.link or input("Введите ссылку: ").strip()
 
     if not token:
         print("ОШИБКА: Не найден токен в переменных окружения!")
         return
 
-    if is_shorten_link(user_input):
+
+    if is_shorten_link(link):
         try:
-            link_stats = get_count_clicks(token, user_input)
+            link_stats = get_count_clicks(
+                token,
+                link
+                )
 
             if 'data' in link_stats:
                 clicks_count = link_stats['data'].get('clicks', 0)
@@ -70,7 +86,7 @@ def main():
         return
 
     try:
-        full_short_link = shorten_link(token, user_input)
+        full_short_link = shorten_link(token, link)
         print('Короткая ссылка ', full_short_link)
     except requests.exceptions.HTTPError:
         print("ОШИБКА: Проблема при обращении к API!")
