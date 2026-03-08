@@ -13,7 +13,7 @@
 python main.py
 ```
 - Если хотите получить короткую ссылку введите нужный вам адрес
-<img width="595" height="63" alt="Screenshot 2026-03-08 182722" src="https://gist.github.com/user-attachments/assets/85629d6c-9a1a-4792-a6c5-d8004e3b0097" />
+[<img width="595" height="63" alt="Screenshot 2026-03-08 182722" src="https://gist.github.com/user-attachments/assets/85629d6c-9a1a-4792-a6c5-d8004e3b0097" />](https://github.com/Skip-Bug/api_lesson_2/blob/main/Image/Screenshot%202026-03-08%20182537.png)
   Можно так:
 
 - Если хотите увидеть статистику по кликам введите ранее полученный адрес
